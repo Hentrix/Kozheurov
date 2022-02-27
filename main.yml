@@ -1,0 +1,63 @@
+- name: Active UWF & OpenPorts 80,8080,1834 on TCP
+  hosts: servers
+  become_method: sudo
+  become_user: root
+
+  tasks:
+  - name: Update and upgrade apt packages
+  become: true
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+    
+- name: Install Curl
+  apt:
+    pkg:
+      - curl
+    state: latest
+    update_cache: true
+    
+  - name: Enable UFW
+    ufw:
+      state: enabled
+      policy: allow
+  - name: Allow all access to tcp port 80
+    ufw:
+      rule: allow
+      port: 80
+      proto: tcp
+    
+  - name: Allow all access to tcp port 8080
+    ufw:
+      rule: allow
+      port: 8080
+      proto: tcp
+    
+  - name: Allow all access to tcp port 1834
+    ufw:
+      rule: allow
+      port: 1834
+      proto: tcp
+
+  - name: Allow all access networks to this host
+    ufw:
+      rule: allow
+      src: '{{ item }}'
+    with_items:
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+      - 192.168.0.0/16
+    
+  - name: Install docker
+    ansible.builtin.shell: "curl -fsSL https://get.docker.com/ | sh"
+
+  - name: Autostart docker
+    ansible.builtin.service:
+      name: docker
+      enabled: yes
+
+  - name: start docker 
+    ansible.builtin.service:
+      name: docker
+      state: started
