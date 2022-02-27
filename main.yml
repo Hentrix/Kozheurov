@@ -4,7 +4,7 @@
   become_user: root
 
   tasks:
-  - name: Update and upgrade apt packages
+- name: Update and upgrade apt packages
   become: true
   apt:
     upgrade: yes
@@ -18,29 +18,29 @@
     state: latest
     update_cache: true
     
-  - name: Enable UFW
+- name: Enable UFW
     ufw:
       state: enabled
       policy: allow
-  - name: Allow all access to tcp port 80
+- name: Allow all access to tcp port 80
     ufw:
       rule: allow
       port: 80
       proto: tcp
     
-  - name: Allow all access to tcp port 8080
+- name: Allow all access to tcp port 8080
     ufw:
       rule: allow
       port: 8080
       proto: tcp
     
-  - name: Allow all access to tcp port 1834
+- name: Allow all access to tcp port 1834
     ufw:
       rule: allow
       port: 1834
       proto: tcp
 
-  - name: Allow all access networks to this host
+- name: Allow all access networks to this host
     ufw:
       rule: allow
       src: '{{ item }}'
@@ -49,15 +49,15 @@
       - 172.16.0.0/12
       - 192.168.0.0/16
     
-  - name: Install docker
+- name: Install docker
     ansible.builtin.shell: "curl -fsSL https://get.docker.com/ | sh"
 
-  - name: Autostart docker
+- name: Autostart docker
     ansible.builtin.service:
       name: docker
       enabled: yes
 
-  - name: start docker 
+- name: start docker 
     ansible.builtin.service:
       name: docker
       state: started
